@@ -1,0 +1,74 @@
+<modification>
+	<id>Multicart Products</id>
+	<version>3.0</version>
+	<author>REDs</author>
+
+	<file path="catalog/view/theme/*/template/product/category.twig">
+		<operation error="skip">
+			<search><![CDATA[{% for product in products %}]]></search>
+			<add position="before"><![CDATA[
+<div class="col-ms-12">
+<style>
+.mcart {position: absolute;z-index: 99;background-color: #fcf8e3;padding: 0 5px;border-radius: 2px;color: #555;cursor: pointer;border: 1px solid #faecce;}
+.alert-multicart {text-align: center;}
+.alert-multicart strong {text-transform: uppercase;font-size: 2em;}
+</style>
+<div class="alert alert-warning alert-multicart" role="alert">
+	<strong>Sr. Cliente</strong><p>Selecione os itens desejados e clique no botão abaixo para adicionar no seu carrinho de compras.
+	<br><a onclick="cartallitem()" class="btn btn-lg btn-multicart" href="Javascript:void(0)"><i class="fa fa-cart-arrow-down fa-3x"></i> Colocar no carrinho</a></p>
+</div>
+<input type='hidden' id='allids' name='allids' value=''/>
+<script>
+function getselecteditem(id){
+
+	var cartid = '#cartitem'+id;
+	
+	if($(cartid).is(":checked")){
+		var textval = $('#allids').val();
+		$('#allids').val(textval+id+',');
+	} else {
+		var allids = $('#allids').val();
+		
+		var mystring = allids.replace(id+',','');
+		$('#allids').val(mystring);
+	}
+	
+	$('.btn-multicart').show();	
+}
+
+function cartallitem(){
+	var allids = $('#allids').val();
+	var res = allids.split(","); 
+	for(var i=0;i<res.length-1;i++) {
+
+		var  item = res[i];
+		cart.add(item);
+	}
+}
+</script>
+</div>
+		]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[
+				<div class="image">
+			]]></search>
+			<add position="before"><![CDATA[
+			<label for="cartitem{{ product.product_id }}" class="mcart">
+				<input onclick="getselecteditem(this.value)" type="checkbox" id="cartitem{{ product.product_id }}" value="{{ product.product_id }}" checked="checked" /> Selecionar
+			</label>
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/language/*/product/category.php">
+		<operation>
+			<search><![CDATA[// Text]]></search>
+			<add position="after"><![CDATA[
+			$_['text_cartitens_info']   = '<strong>Sr. Cliente</strong><p>Clique no botão "colocar no carrinho" para adicionar toda a seleção, ou desmarque os itens não desejados!';
+$_['text_cartitens']  		  = 'Selecionado';
+$_['button_cartitens']  		= 'Colocar no carrinho';
+			
+			]]></add>
+		</operation>
+	</file>
+</modification>
